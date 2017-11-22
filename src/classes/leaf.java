@@ -9,10 +9,12 @@ public class leaf implements treeComponent{
 	private String ID;
 	private User user;
 	private DefaultMutableTreeNode Node;
+	private long CreationTime;
 	
 	public leaf(String id) {
 		this.ID = id;
-		user = new User(id);
+		this.CreationTime = System.currentTimeMillis();
+		user = new User(id, CreationTime);
 		Node = new DefaultMutableTreeNode(id, false);
 	}
 	
@@ -38,5 +40,9 @@ public class leaf implements treeComponent{
 
 	public void receive(Visitor visitor) {
 		visitor.visitUser(this.user);
+	}
+
+	public long getCreationTime() {
+		return CreationTime;
 	}
 }

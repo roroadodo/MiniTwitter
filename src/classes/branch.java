@@ -15,9 +15,11 @@ public class branch implements treeComponent {
 	private String ID;
 	private boolean IsEmpty;
 	private DefaultMutableTreeNode Node;
+	private long CreationTime;
 
 	public branch(String id) {
 		this.ID = id;
+		this.CreationTime = System.currentTimeMillis();
 		IsEmpty = true;
 		TreeComponentsList = new ArrayList<treeComponent>();
 		Node = new DefaultMutableTreeNode(id, true);
@@ -52,5 +54,9 @@ public class branch implements treeComponent {
 
 	public void receive(Visitor visitor) {
 		visitor.visitGroup(this);
+	}
+
+	public long getCreationTime() {
+		return CreationTime;
 	}
 }

@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -29,6 +30,8 @@ public class User implements TwitterObserver, TwitterSubject {
 	// ==============================================
 	private User instance = this;
 	private String ID;
+	private long CreationTime;
+	private long UpdateTime;
 	private List<User> observers = new ArrayList<User>();
 	private List<String> following = new ArrayList<String>();
 	private List<String> tweetFeed = new ArrayList<String>();
@@ -47,13 +50,18 @@ public class User implements TwitterObserver, TwitterSubject {
 	private JButton btnFollowUser = new JButton("Follow User");
 	private JButton btnPostTweet = new JButton("Post Tweet");
 
+	private JLabel CreationTimelbl = new JLabel();
+	private JLabel UpdateTimelbl = new JLabel();
+
 	private int positiveMsgCount = 0;
 	// ==============================================
 	// END OF FIELDS/BUTTONS/WIDGETS/SWING COMPONENTS
 	// ==============================================
 
-	public User(String id) {
+	public User(String id, long creationTime) {
 		this.ID = id;
+		this.CreationTime = creationTime;
+		this.UpdateTime = creationTime;
 		observers = new ArrayList<User>();
 		Frame = new JFrame("User Panel: " + ID);
 		Frame.setSize(700, 500);
@@ -103,7 +111,7 @@ public class User implements TwitterObserver, TwitterSubject {
 		tweetPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 7));
 		listFollowingPanel.setLayout(new GridLayout(1, 1));
 		newsFeedPanel.setLayout(new GridLayout(1, 1));
-		userInfoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
 		TopPanel.setLayout(new BoxLayout(TopPanel, BoxLayout.Y_AXIS));
 	}
 
@@ -118,6 +126,10 @@ public class User implements TwitterObserver, TwitterSubject {
 		listFollowingPanel.add(new JScrollPane(new JList(following.toArray())));
 		newsFeedPanel.add(new JScrollPane(new JList(tweetFeed.toArray())));
 		userInfoPanel.add(new JLabel("Panel Of User: " + ID));
+		userInfoPanel.add(CreationTimelbl);
+		userInfoPanel.add(UpdateTimelbl);
+		CreationTimelbl.setText("CREATION TIME: " + new Date(CreationTime));
+		UpdateTimelbl.setText("UPDATE TIME: " + new Date(UpdateTime));
 	}
 
 	private void addToFrame() {
@@ -139,11 +151,28 @@ public class User implements TwitterObserver, TwitterSubject {
 		return positiveMsgCount;
 	}
 
+	public String getID() {
+		return this.ID;
+	}
+
+	public long getCreationTime() {
+		return this.CreationTime;
+	}
+	
+	public long getUpdateTime() {
+		return this.UpdateTime;
+	}
+
+	private void UpdateTime() {
+		this.UpdateTime = System.currentTimeMillis();
+		UpdateTimelbl.setText("UPDATE TIME: " + new Date(UpdateTime));
+	}
+
 	public void notifyObservers() {
 		checkPositiveMsg(txtTweet.getText());
 		String tweet = ID + ": " + txtTweet.getText();
 		txtTweet.setText("");
-
+		UpdateTime();
 		for (User follower : observers) {
 			follower.getUpdate(ID, tweet);
 		}
@@ -160,6 +189,7 @@ public class User implements TwitterObserver, TwitterSubject {
 		newsFeedPanel.remove(0);
 		newsFeedPanel.add(new JScrollPane(new JList(tweetFeed.toArray())));
 		newsFeedPanel.validate();
+		UpdateTime();
 		newsFeedPanel.repaint();
 	}
 

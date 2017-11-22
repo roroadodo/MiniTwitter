@@ -46,7 +46,8 @@ public class adminFrame extends JFrame {
 	private JButton BtnGroupTotal = new JButton("showGroupTotal");
 	private JButton BtnMsgTotal = new JButton("Show Messages Total");
 	private JButton BtnPosPercent = new JButton("Show Positive Percentage");
-
+	private JButton BtnAllValid = new JButton("Check ID Validity");
+	private JButton BtnLatestUpdate = new JButton("Find the last updated User");
 	private branch root = new branch("root");
 	private JTree tree;
 
@@ -95,6 +96,8 @@ public class adminFrame extends JFrame {
 		counterPane.add(BtnGroupTotal);
 		counterPane.add(BtnMsgTotal);
 		counterPane.add(BtnPosPercent);
+		counterPane.add(BtnAllValid);
+		counterPane.add(BtnLatestUpdate);
 	}
 
 	private void addTree() {
@@ -110,7 +113,7 @@ public class adminFrame extends JFrame {
 		treePane.setLayout(new GridLayout(1, 1));
 		topPane.setLayout(new BoxLayout(topPane, BoxLayout.X_AXIS));
 		buttonsPane.setLayout(new BoxLayout(buttonsPane, BoxLayout.Y_AXIS));
-		counterPane.setLayout(new GridLayout(2, 2));
+		counterPane.setLayout(new GridLayout(3, 2));
 	}
 
 	private void setEvents() {
@@ -211,6 +214,22 @@ public class adminFrame extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				PositiveMsgPercentVisitor visitor = new PositiveMsgPercentVisitor();
+				TreeTranverser.getTreeTranverser().visit(visitor);
+				visitor.output();
+			}
+		});
+		BtnAllValid.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				IDVerificationVisitor visitor = new IDVerificationVisitor();
+				TreeTranverser.getTreeTranverser().visit(visitor);
+				visitor.output();
+			}
+		});
+		BtnLatestUpdate.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				LastUpdatedUserVisitor visitor = new LastUpdatedUserVisitor();
 				TreeTranverser.getTreeTranverser().visit(visitor);
 				visitor.output();
 			}
